@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart News Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-light: #f3f6fc;
+      --bg-dark: #1f1f1f;
+      --text-light: #333;
+      --text-dark: #f3f3f3;
+      --card-light: #ffffff;
+      --card-dark: #2e2e2e;
+      --primary: #0056e0;
+      --primary-hover: #003ba0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-light), #e9efff);
+      color: var(--text-light);
+      padding: 40px 20px;
+      transition: all 0.3s ease-in-out;
+      position: relative;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, var(--bg-dark), #121212);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 1150px;
+      margin: 0 auto;
+      background: var(--card-light);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
+    }
+
+    body.dark .container {
+      background: var(--card-dark);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 40px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: #002c6b;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background: #f8f9fc;
+    }
+
+    button, .toggle-btn {
+      padding: 14px 22px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover, .toggle-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .news-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    .news-card {
+      background: var(--card-light);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s;
+    }
+
+    .news-card:hover {
+      transform: translateY(-8px);
+    }
+
+    body.dark .news-card {
+      background: var(--card-dark);
+    }
+
+    .news-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .news-card .content {
+      padding: 18px;
+    }
+
+    .news-card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #002c6b;
+    }
+
+    .news-card p {
+      font-size: 15px;
+      color: #555;
+    }
+
+    .news-card a {
+      margin-top: auto;
+      padding: 14px;
+      text-align: center;
+      font-weight: 600;
+      background: #f4f4f4;
+      text-decoration: none;
+      color: var(--primary);
+      border-top: 1px solid #e5e5e5;
+      transition: background 0.3s;
+    }
+
+    .news-card a:hover {
+      background: #e6ecf5;
+    }
+
+    /* Avatar Profile Section */
+    .avatar-box {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 999;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      background: #ccc;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .avatar-wrapper img.avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .avatar-wrapper img.flag {
+      position: absolute;
+      bottom: -3px;
+      right: -4px;
+      width: 20px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .profile-hover {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      background: var(--card-light);
+      padding: 14px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      width: 220px;
+      display: none;
+    }
+
+    .avatar-box:hover .profile-hover {
+      display: block;
+    }
+
+ .social-icons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+  }
+
+  .social-icons a {
+    color: var(--bronze);
+    font-size: 24px;
+    text-decoration: none;
+    transition: transform 0.3s ease, color 0.3s ease;
+    position: relative;
+  }
+  .social-icons a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 8px var(--bronze);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .social-icons a:hover {
+    color: var(--bronze-light);
+    transform: scale(1.4);
+    z-index: 10;
+  }
+  .social-icons a:hover::after {
+    opacity: 1;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="controls">
+      <h1>Smart News Explorer</h1>
+      <button class="toggle-btn" onclick="document.body.classList.toggle('dark')">Toggle Theme</button>
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search news (e.g. Palestine, Cricket)...">
+      <button onclick="searchNews()">Search</button>
+    </div>
+    <div class="news-container" id="newsContainer"></div>
+  </div>
+
+  <!-- Avatar and Hover Profile -->
+  <div class="avatar-box">
+    <div class="avatar-wrapper">
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/583231?v=4" alt="Avatar">
+      <img class="flag" src="https://your-palestine-link.com" alt="Flag">
+    </div>
+    <div class="profile-hover">
+     <div style="color: steelblue; font-style: var(--bg-dark); font-style: initial;" > <h4>C/B : M Umer Khan</h4> 
+      <h4>ID: 402480</h4> </div>
+      <p><b>Smart News Explorer is a fast, API-powered news app that delivers top global and Pakistan-specific headlines with smart keyword detection and a clean, responsive UI.</b></p>
+      <div class="social-icons">
+  <a href="https://www.linkedin.com/in/umerfarooq" target="_blank"><i class="fab fa-linkedin"></i></a>
+  <a href="https://github.com/M-Umer-k6" target="_blank"><i class="fab fa-github"></i></a>
+  <a href="mailto:umerfarooq@example.com"><i class="fas fa-envelope"></i></a>
+  <a href="https://instagram.com/umerfarooq" target="_blank"><i class="fab fa-instagram"></i></a>
+    <svg width="32" height="20" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+      <rect width="300" height="60" y="0" fill="#000000" />
+      <rect width="300" height="60" y="60" fill="#FFFFFF" />
+      <rect width="300" height="60" y="120" fill="#007A3D" />
+      <polygon points="0,0 150,90 0,180" fill="#CE1126" />
+    </svg>
+  </a>
+</div>
+
+    </div>
+  </div>
+
+  <script>
+    async function searchNews() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const container = document.getElementById('newsContainer');
+
+      if (!query) {
+        container.innerHTML = '<p style="color: orange; text-align: center;">Please type something to search news.</p>';
+        return;
+      }
+
+      container.innerHTML = `<p style="text-align:center; font-weight: 500;">🔍 Searching for "<strong>${query}</strong>"...</p>`;
+
+      try {
+        const apiKey = '2fe1467d127a42ee92288e1536f29ea5';
+        const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&sortBy=publishedAt&pageSize=10&language=en&apiKey=${apiKey}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.articles || data.articles.length === 0) {
+          container.innerHTML = '<p style="color: red; text-align: center;">No news found for your search.</p>';
+          return;
+        }
+
+        container.innerHTML = data.articles.map(article => `
+          <div class="news-card">
+            <img src="${article.urlToImage || 'https://via.placeholder.com/400x200'}" alt="news image">
+            <div class="content">
+              <h3>${article.title}</h3>
+              <p>${article.description || 'No description available.'}</p>
+            </div>
+            <a href="${article.url}" target="_blank">Read More</a>
+          </div>
+        `).join('');
+      } catch (error) {
+        container.innerHTML = '<p style="color: red; text-align: center;">Error fetching news. Please try again later.</p>';
+        console.error('Error:', error);
+      }
+    }
+  </script>
+</body>
+</html>
